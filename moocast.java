@@ -13,33 +13,75 @@ public class moocast {
         StringTokenizer s = new StringTokenizer(reader.readLine());
 
         n = Integer.parseInt(s.nextToken());
+
+        int [][] xy = new int[n][2];
+
+
         
         out.close();
     }
 
+    public static int prims (int sV) {
+        int m = n - 1;
+        int counter = 0;
+        int maxCost = 0;
+        PriorityQueue <Pair> pq = new PriorityQueue<Pair>();
+
+        boolean [] visited = new boolean[n];
+
+        Arrays.fill(visited, false);
+
+        for (Pair p : graph[sV]) {
+            pq.offer(p);
+        }
+
+        visited[sV] = true;
+
+        while (!pq.isEmpty() && counter < m) {
+            Pair curP = pq.poll();
+
+            if (visited[curP.x] && visited[curP.y]) {
+                continue;
+            }
+
+            int newv = visited[curP.x] ? curP.y : curP.x;
+
+            visited[newv] = true;
+            maxCost += curP.w;
+
+            for (Pair p : graph[newv]) {
+                pq.offer(p);
+            }
+
+            counter++;
+        }
+
+        if (counter == m) {
+            return maxCost;
+        }
+
+        return -1;
+    }
+
     private static class Pair implements Comparable<Pair> {
-        int start;
-        int end;
+        int x;
+        int y;
+        int w;
 
         public Pair(int x, int y, int z) {
-            this.start = x;
-            this.end = y;
+            this.x = x;
+            this.y = y;
+            this.w = z;
         }
 
         @Override
         public int compareTo(Pair o) {
-            return end - o.end;
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            Pair nother = (Pair) other;
-            return nother.end == end;
+            return w - o.w;
         }
 
         @Override
         public String toString() {
-            return start + " " + end;
+            return x + " " + y + " " + w;
         }
     }
 }
