@@ -7,6 +7,7 @@ import java.util.*;
 
 public class moocast {
     private static int n;
+    private static ArrayList<Pair> [] graph;
     public static void main(String[] args) throws IOException {
         PrintWriter out = new PrintWriter(new File("moocast.out"));
         BufferedReader reader = new BufferedReader(new FileReader(new File("moocast.in")));
@@ -16,7 +17,29 @@ public class moocast {
 
         int [][] xy = new int[n][2];
 
+        for (int i = 0; i < n; i++) {
+            s = new StringTokenizer(reader.readLine());
 
+            xy[i][0] = Integer.parseInt(s.nextToken());
+            xy[i][1] = Integer.parseInt(s.nextToken());
+        }
+
+        graph = new ArrayList [n];
+
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<Pair>();
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                int dist = (xy[i][0] - xy[j][0]) * (xy[i][0] - xy[j][0]) + (xy[i][1] - xy[j][1]) * (xy[i][1] - xy[j][1]);
+
+                graph[i].add(new Pair(i, j, dist));
+                graph[j].add(new Pair(j, i, dist));
+            }
+        }
+
+        System.out.println(Arrays.deepToString(graph));
         
         out.close();
     }
