@@ -8,12 +8,16 @@ import java.util.*;
 public class moocast {
     private static int n;
     private static ArrayList<Pair> [] graph;
+    private static long maxC = 17;
+    private static int maxD = 0;
     public static void main(String[] args) throws IOException {
         PrintWriter out = new PrintWriter(new File("moocast.out"));
         BufferedReader reader = new BufferedReader(new FileReader(new File("moocast.in")));
         StringTokenizer s = new StringTokenizer(reader.readLine());
 
         n = Integer.parseInt(s.nextToken());
+
+        //System.out.println(n);
 
         int [][] xy = new int[n][2];
 
@@ -36,10 +40,41 @@ public class moocast {
 
                 graph[i].add(new Pair(i, j, dist));
                 graph[j].add(new Pair(j, i, dist));
+
+                if (dist > maxD) {
+                    maxD = dist;
+                }
             }
         }
 
-        System.out.println(Arrays.deepToString(graph));
+        //System.out.println(Arrays.deepToString(graph));
+        //System.out.println(prims(0));
+
+        long a = 0;
+        long b = maxD;
+
+        maxC = (a + b) / 2;
+
+        while (a < b) {
+            maxC = (a + b) / 2;
+
+            if (prims(0) != -1) {
+                b = maxC;
+                continue;
+            }
+
+            a = maxC + 1;
+        }
+
+        //System.out.println(maxC);
+
+        if (prims(0) != -1) {
+            out.println(maxC);
+        }
+
+        else {
+            out.println(maxC + 1);
+        }
         
         out.close();
     }
@@ -55,7 +90,9 @@ public class moocast {
         Arrays.fill(visited, false);
 
         for (Pair p : graph[sV]) {
-            pq.offer(p);
+            if (p.w <= maxC) {
+                pq.offer(p);
+            }
         }
 
         visited[sV] = true;
@@ -73,14 +110,16 @@ public class moocast {
             maxCost += curP.w;
 
             for (Pair p : graph[newv]) {
-                pq.offer(p);
+                if (p.w <= maxC) {
+                    pq.offer(p);
+                }
             }
 
             counter++;
         }
 
         if (counter == m) {
-            return maxCost;
+            return 1;
         }
 
         return -1;
