@@ -42,4 +42,26 @@ public class layoutOfProblems {
             return start + " " + end;
         }
     }
+
+    private static class Pairy implements Comparable<Pairy> {
+        int x;
+        int y;
+        int w;
+
+        public Pairy(int x, int y, int z) {
+            this.x = x;
+            this.y = y;
+            this.w = z;
+        }
+
+        @Override
+        public int compareTo(Pairy o) {
+            return w - o.w;
+        }
+
+        @Override
+        public String toString() {
+            return x + " " + y + " " + w;
+        }
+    }
 }

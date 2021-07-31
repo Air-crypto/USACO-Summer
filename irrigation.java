@@ -62,7 +62,7 @@ public class irrigation {
         Arrays.fill(visited, false);
 
         for (Pair p : graph[sV]) {
-            pq.offer(p);
+            pq.add(p);
         }
 
         visited[sV] = true;
@@ -80,7 +80,7 @@ public class irrigation {
             maxCost += curP.w;
 
             for (Pair p : graph[newv]) {
-                pq.offer(p);
+                pq.add(p);
             }
 
             counter++;
