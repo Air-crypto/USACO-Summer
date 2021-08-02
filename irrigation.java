@@ -46,7 +46,9 @@ public class irrigation {
 
         //System.out.println(Arrays.deepToString(graph));
 
-        out.println(prims(0));
+        Random ran = new Random();
+
+        out.println(prims(ran.nextInt(n)));
         
         out.close();
     }
