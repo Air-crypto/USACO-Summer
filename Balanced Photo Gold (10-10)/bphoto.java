@@ -22,6 +22,7 @@ public class bphoto {
         arr = new int[n];
         L = new int [n];
         R = new int [n];
+        
         int [] tarr = new int[n];
         int [] tar = new int[n];
 
