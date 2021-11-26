@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class pump {
+public class roundtriptwo {
     //Kattio adapted from USACO Guide
     static class Kattio extends PrintWriter {
 		private BufferedReader r;
