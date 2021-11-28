@@ -2,168 +2,117 @@ import java.util.*;
 import java.io.*;
 
 public class dining {
-    public static ArrayList <trip> [] arr;
-    public static int [] dist;
-    public static int m;
-    public static int n;
-    public static ArrayList <Triple> eat = new ArrayList <Triple> ();
-    public static void main(String[] args) throws IOException{
-        Scanner s = new Scanner (new File("dining.in"));
-        PrintWriter out = new PrintWriter(new File("dining.out"));
+	final public static int OFFSET = 1000000001;
+	public static int n;
+	public static ArrayList[] orig;
+	public static int[] yummy;
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader stdin = new BufferedReader(new FileReader("dining.in"));
+        PrintWriter out = new PrintWriter(new FileWriter("dining.out"));
+		StringTokenizer tok = new StringTokenizer(stdin.readLine());
+		n = Integer.parseInt(tok.nextToken());
+		orig = new ArrayList[n];
+		for (int i=0; i<n; i++) orig[i] = new ArrayList<edge>();
+		int numE = Integer.parseInt(tok.nextToken());
+		int numTreats = Integer.parseInt(tok.nextToken());
+		yummy = new int[n];
+		
+		for (int i=0; i<numE; i++) {
+			tok = new StringTokenizer(stdin.readLine());
+			int u = Integer.parseInt(tok.nextToken())-1;
+			int v = Integer.parseInt(tok.nextToken())-1;
+			int w = Integer.parseInt(tok.nextToken());
+			orig[u].add(new edge(v,w));
+			orig[v].add(new edge(u,w));
+		}
+		
+		for (int i = 0; i < numTreats; i++) {
+			tok = new StringTokenizer(stdin.readLine());
+			int u = Integer.parseInt(tok.nextToken())-1;
+			int val = Integer.parseInt(tok.nextToken());
+			yummy[u] = val;
+		}
+		
+		int[] shortest = dijkstra(orig, n-1);
+		
+		ArrayList[] treatG = makeTreatGraph();
+		
+		int[] treat = dijkstra(treatG, n-1);
+		
+		StringBuffer sb = new StringBuffer();
+		for (int i=0; i<n-1; i++) {
+			if (treat[n+i]-OFFSET <= treat[i])
+				out.println(1);
+			else
+				out.println(0);
+		}
+		
+		out.close();		
+		stdin.close();
+	}
+	
+	public static ArrayList[] makeTreatGraph() {
+		
+		ArrayList[] g = new ArrayList[2*n];
+		for (int i=0; i<2*n; i++) g[i] = new ArrayList<edge>();
+		
+		for (int i=0; i<n; i++) {
+			for (int j=0; j<2*n; j+=n) {
+				for (edge e: (ArrayList<edge>)orig[i]) {
+					g[i+j].add(new edge(e.to+j, e.w));
+					g[e.to+j].add(new edge(i+j, e.w));
+				}
+			}
+		}
+		
+		for (int i=0; i<n; i++) {
+			if (yummy[i] > 0) {
+				g[i].add(new edge(i+n,OFFSET-yummy[i]));
+			}
+		}
+		
+		return g;
+	}
+	
+	public static int[] dijkstra(ArrayList[] g, int source) {
+		int[] dist = new int[g.length];
+		Arrays.fill(dist, Integer.MAX_VALUE);
+		dist[source] = 0;
+		boolean[] done = new boolean[dist.length];
+		done[source] = true;
 
-        n = s.nextInt();
+		PriorityQueue<edge> pq = new PriorityQueue<edge>();
+		for (edge e: (ArrayList<edge>)g[source])
+			pq.offer(e);
+		
+		while (pq.size() > 0) {
+			edge cur = pq.poll();
+			if (done[cur.to]) continue;
+			
+			dist[cur.to] = cur.w;
+			done[cur.to] = true;
+			
+			for (edge e: (ArrayList<edge>)g[cur.to])
+				if (!done[e.to] && cur.w+e.w < dist[e.to])
+					pq.offer(new edge(e.to, cur.w+e.w));
+		}
+		
+		return dist;
+	}
+}
 
-        if (n == 4) {
-            out.println(1);
-            out.println(1);
-            out.println(1);
-            out.close();
-            System.exit(0);
-        }
-
-        m = s.nextInt();
-        int k = s.nextInt();
-
-        arr = new ArrayList [n + 1];
-
-        for (int i = 1; i <= n; i++) {
-            arr[i] = new ArrayList <trip> ();
-        }
-
-        for (int i = 0; i < m; i++) {
-            int one = s.nextInt();
-            int two = s.nextInt();
-            int weight = s.nextInt();
-
-            trip t = new trip(two, weight);
-            trip to = new trip(one, weight);
-
-            arr[one].add(t);
-            arr[two].add(to);
-        }
-
-        for (int i = 0; i < k; i++) {
-            int now = s.nextInt();
-            int w = s.nextInt();
-
-            dijikstra(now);
-
-            Triple p = new Triple(now, w, dist[n]);
-
-            eat.add(p);
-        }
-
-        //System.out.println(Arrays.toString(arr));
-
-        for (int i = 1; i < n; i++) {
-            dijikstra(i);
-            int orig = dist[n];
-            //System.out.println(orig);
-            boolean found = false;
-
-            /*
-            for (Triple p : eat) {
-                //System.out.println(finder);
-
-                int calc = dist[p.one] + p.three - p.two;
-
-                if (calc <= orig) {
-                    out.println(1);
-                    found = true;
-                    break;
-                }
-            }
-            */
-
-            if (!found) {
-                out.println(0);
-            }
-        }
-
-        out.close();
-        s.close();
-    }
-
-    public static void dijikstra (int x) {
-        boolean [] used = new boolean[n + 1];
-        
-        dist = new int [n + 1];
-
-        for (int i = 1; i <= n; i++) {
-            dist[i] = Integer.MAX_VALUE;
-        }
-
-        dist[x] = 0;
-
-        PriorityQueue <Pair> q = new PriorityQueue <Pair> ();
-
-        q.add(new Pair(dist[x], x));
-
-        while (!q.isEmpty()) {
-            int a = q.poll().two;
-
-            if (used[a]) {
-                continue;
-            }
-
-            used[a] = true;
-
-            for (trip t : arr[a]) {
-                int b = t.a;
-                int w = t.w;
-
-                if (dist[a] + w < dist[b]) {
-                    dist[b] = dist[a] + w;
-                    q.add(new Pair(dist[b], b));
-                }
-            }
-        }
-    }
-
-    static class Pair implements Comparable <Pair> {
-        int one;
-        int two;
-
-        public Pair (int one, int two) {
-            this.one = one;
-            this.two = two;
-        }
-
-        @Override
-        public int compareTo(Pair o) {
-            return this.one - o.one;
-        }
-    }
-
-    static class Triple implements Comparable <Triple> {
-        int one;
-        int two;
-        int three;
-
-        public Triple (int one, int two, int three) {
-            this.one = one;
-            this.two = two;
-            this.three = three;
-        }
-
-        @Override
-        public int compareTo(Triple o) {
-            return this.one - o.one; 
-        }
-    }
-
-    static class trip {
-        int a;
-        int w;
-
-        public trip (int x, int z) {
-            this.a = x;
-            this.w = z;
-        }
-
-        @Override
-        public String toString () {
-            return a + ", " + w + ":";
-        }
-    }
+class edge implements Comparable<edge> {
+	
+	public int to;
+	public int w;
+	
+	public edge(int v, int weight) {
+		to = v;
+		w = weight;
+	}
+	
+	public int compareTo(edge other) {
+		return this.w - other.w;
+	}
 }
