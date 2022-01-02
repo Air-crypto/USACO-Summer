@@ -109,7 +109,7 @@ class roadreparition {
         else if (depth[ro] > depth[rt]) {
 			arr[rt] = ro;
 			depth[ro] = depth[ro] + depth[rt];
-			counter -= 1;
+			counter--;
 		}
 	}
 }
