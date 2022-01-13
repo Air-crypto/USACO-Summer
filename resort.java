@@ -15,9 +15,9 @@ public class resort {
         }
 
         for (int i = 0; i < n; i++) {
-            connect[i] = s.nextInt();
+            connect[i] = s.nextInt() - 1;
 
-            if (connect[i] == 0) {
+            if (connect[i] != -1) {
                 done[connect[i]] += 1;
             }
         }
@@ -33,7 +33,7 @@ public class resort {
 
                 ArrayList <Integer> temp = new ArrayList<Integer>();
 
-                while (connect[cur] != 0 && done[connect[cur]] <= 1) {
+                while (connect[cur] != -1 && done[connect[cur]] <= 1) {
                     temp.add(cur);
 
                     cur = connect[cur];
@@ -50,7 +50,7 @@ public class resort {
         System.out.println(list.size());
 
         for (int i = list.size() - 1; i >= 0; i--) {
-            System.out.print(list.get(i) + " ");
+            System.out.print((list.get(i) + 1) + " ");
         }
     }   
 }
