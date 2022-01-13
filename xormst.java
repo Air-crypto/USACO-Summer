@@ -4,12 +4,15 @@ public class xormst {
     public static HashMap <Integer, ArrayList <Pair>> map = new HashMap <Integer, ArrayList <Pair>>();
     public static HashMap <String, Integer> seen = new HashMap <String, Integer>();
     public static int n;
+    public static int [] parent;
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
 
         n = s.nextInt();
 
         long [] arr = new long [n + 1];
+
+        long [] parent = new long [n + 1];
 
         for (int i = 1; i <= n; i++) {
             arr[i] = s.nextLong();
@@ -37,46 +40,28 @@ public class xormst {
         }
 
         System.out.println(map);
-        System.out.println(mstPrim());
+        System.out.println(mst());
     }
 
-    public static long mstPrim() {
-        long[] prev = new long[n + 1];
-        long[] dist = new long[n + 1];
+    public static long mst() {
+        return 0;
+    }
 
-        Arrays.fill(dist, Integer.MAX_VALUE);
-
-        dist[0] = 0;
-
-        boolean[] visited = new boolean[n + 1];
-
-        long res = 0;
-
-        for (int i = 1; i <= n; i++) {
-            int u = -1;
-
-            for (int j = 1; j <= n; j++) {
-                if (!visited[j] && (u == -1 || dist[u] > dist[j])) {
-                    u = j;
-                }
-            }
-
-            //System.out.println(u);
-
-            res += dist[u];
-            visited[u] = true;
-
-            for (int j = 1; j <= n; j++) {
-                System.out.println(map.get(u));
-                if (!visited[j] && dist[j] > map.get(u).get(j - 1).w) {
-                    dist[j] = map.get(u).get(j - 1).w;
-                    prev[j] = u;
-                }
-            }
+    public static int findRoot (int a) {
+        if (parent[a] == a) {
+            return a;
         }
 
-        return res - Integer.MAX_VALUE;
-      }
+        return parent[a] = findRoot(parent[a]);
+    }
+
+    public static boolean isConnected (int a, int b) {
+        return findRoot(a) == findRoot(b);
+    }
+
+    public static void join (int a, int b) {
+        parent[findRoot(a)] = findRoot(b);
+    }
 }
 
 class Pair implements Comparable<Pair> {
