@@ -22,8 +22,8 @@ public class resort {
             }
         }
 
-        System.out.println(Arrays.toString(types));
-        System.out.println(Arrays.toString(connect));
+        //System.out.println(Arrays.toString(types));
+        //System.out.println(Arrays.toString(connect));
 
         ArrayList<Integer> list = new ArrayList<Integer>();
 
