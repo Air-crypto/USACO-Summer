@@ -1,30 +1,33 @@
 import java.util.*;
 
 public class listremovals {
+    public static long[] BIT; 
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
 
         int n = s.nextInt();
 
         ArrayList<Integer> list = new ArrayList<Integer>();
+        BIT = new long[n + 1];
 
         for (int i = 0; i < n; i++) {
-            list.add(s.nextInt());
+            int cur = s.nextInt();
+            list.add(cur);
+            update(i + 1, cur);
         }
+
+        System.out.println(Arrays.toString(BIT));
 
         String done = "";
 
         for (int i = 0; i < n; i++) {
-            int cur = s.nextInt() - 1;
+            int cur = s.nextInt();
 
-            done += list.get(cur) + " ";
-            list.remove(cur);
+            System.out.println(sum(cur) - sum(cur - 1));
         }
 
-        System.out.println(done);
+        //System.out.println(done);
     }
-
-    public static long[] BIT; 
 
 	public static long sum(int i) {
 		long sum = 0;
